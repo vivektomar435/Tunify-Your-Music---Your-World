@@ -545,3 +545,64 @@ tooltipWrap.addEventListener('click', function(e) {
 document.addEventListener('click', function() {
     tooltipMsg.classList.remove('tooltip-visible');
 });
+//Request a Song Feature
+
+function openReqBanner() {
+    document.getElementById('reqOverlay').classList.add('active');
+    document.querySelector('.main').classList.add('blurred');
+    document.querySelector('.music-player').classList.add('blurred');
+}
+
+function closeReqBanner() {
+    document.getElementById('reqOverlay').classList.remove('active');
+    document.querySelector('.main').classList.remove('blurred');
+    document.querySelector('.music-player').classList.remove('blurred');
+}
+
+function handleReqOverlay(e) {
+    if (e.target === document.getElementById('reqOverlay')) {
+        closeReqBanner();
+    }
+}
+
+function submitRequest() {
+    let name = document.getElementById('reqName').value.trim();
+    let song = document.getElementById('reqSong').value.trim();
+    let singer = document.getElementById('reqSinger').value.trim();
+    let msg = document.getElementById('reqMsg');
+
+    if (!name || !song || !singer) {
+        msg.style.color = '#e74c3c';
+        msg.innerText = 'Please fill in all fields!';
+        return;
+    }
+
+msg.style.color = '#aaaaaa';
+ msg.innerText = 'Sending...';
+
+let formData = new FormData();
+formData.append('name', name);
+formData.append('song', song);
+formData.append('singer', singer);
+
+fetch('https://script.google.com/macros/s/AKfycbzb-OlGX4IkwifQG-bxYw1ryl4bXxBSt_VMWd99tGgcfn0dAPLi7-1SKy1tNh2PWjxA3g/exec', {
+    method: 'POST',
+    mode: 'no-cors',
+    body: formData
+})
+.then(() => {
+    msg.style.color = '#1bd760';
+    msg.innerText = 'Request sent! Thank you';
+    document.getElementById('reqName').value = '';
+    document.getElementById('reqSong').value = '';
+    document.getElementById('reqSinger').value = '';
+})
+.catch(() => {
+    msg.style.color = '#e74c3c';
+    msg.innerText = 'Something went wrong. Try again!';
+});
+}
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeReqBanner();
+});
